@@ -5,6 +5,10 @@ import CoreGraphics
 
 /// Renders a UIImage of the waveform data calculated by the analyzer.
 public class WaveformImageDrawer {
+    static public func sampleCount(for size: CGSize, scale: CGFloat = UIScreen.main.scale) -> Int {
+        return Int(size.width * scale)
+    }
+
     public init() {}
 
     // swiftlint:disable function_parameter_count
@@ -45,6 +49,23 @@ public class WaveformImageDrawer {
                                                   paddingFactor: paddingFactor)
         waveformImage(fromAudioAt: audioAssetURL, with: configuration, completionHandler: completionHandler)
     }
+    
+    /// Renders a UIImage of the waveform data samples previously calculated by the analyzer.
+    public func waveformImage(from samples: [Float],
+                              size: CGSize,
+                              backgroundColor: UIColor = UIColor.clear,
+                              style: WaveformStyle = .gradient([UIColor.black, UIColor.darkGray]),
+                              position: WaveformPosition = .middle,
+                              scale: CGFloat = UIScreen.main.scale,
+                              paddingFactor: CGFloat? = nil,
+                              qos: DispatchQoS.QoSClass = .userInitiated,
+                              completionHandler: @escaping (_ waveformImage: UIImage?) -> ()) {
+        let configuration = WaveformConfiguration(size: size, backgroundColor: backgroundColor,
+                                                  style: style, position: position, scale: scale,
+                                                  paddingFactor: paddingFactor)
+        completionHandler(self.graphImage(from: samples, with: configuration))
+    }
+
 
     // swiftlint:enable function_parameter_count
 }
